@@ -1,6 +1,6 @@
 # readme-profiler
 
-![](demo_1.png)
+![](https://preview.redd.it/0cm6yx27tez21.jpg?width=640&crop=smart&auto=webp&s=612c7aedbfe0ef17ba20120fb7a1defedaa1e7d3)
 
 ---
 
@@ -17,6 +17,8 @@ Summarizing repository content can be invaluable for developers who want to keep
 - Downloading their `README.md` files.
 - Summarizing the content using OpenAI's GPT models.
 - Compiling the summaries into a Markdown file.
+
+![](demo_1.png)
 
 ## Potential Extensions
 
