@@ -7,9 +7,6 @@
 
 # Automating GitHub Repository Summaries with Python
 
-a Python script that fetches a user's GitHub repositories within a specific date range, extracts and summarizes their `README.md` files, and compiles the summaries into a consolidated Markdown profile.
-
-
 Imagine having a tool that not only fetches a user's GitHub repositories within a specific date range but also extracts and summarizes their `README.md` files. This tool would provide a quick overview of multiple repositories, making it easier to keep an eye on recent changes or understand the purpose of new repositories. This blog post introduces a Python script that does exactly that, leveraging the capabilities of OpenAI's GPT models to summarize the content.
 
 ## Introduction
