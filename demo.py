@@ -9,7 +9,8 @@ import faiss
 from langchain_ollama import OllamaEmbeddings
 import nltk
 from nltk.tokenize import sent_tokenize, word_tokenize
-
+from tenacity import retry, wait_random_exponential, stop_after_attempt
+import time
 # demo setup
 from openai import AzureOpenAI
 
@@ -19,12 +20,15 @@ client = AzureOpenAI(
     api_version="2024-10-21",
     azure_endpoint="https://.openai.azure.com"
 )
+@retry(wait=wait_random_exponential(min=1, max=60), stop=stop_after_attempt(5))
+def chat_completion_with_backoff(**kwargs):
+    return client.chat.completions.create(**kwargs)
 
 def summarize_text(text, max_length=10):
     system_message = "You are a helpful assistant that summarizes text in markdown format."
     system_message += " Provide only the summary, without any additional explanations."
     user_input = f"Summarize this `README.md` text in about {max_length} words: ```README.md\n{text}```"
-    response = client.chat.completions.create(
+    response = chat_completion_with_backoff(
         model="gpt-4o",  # or "gpt-3.5-turbo", depending on your preference
         messages=[
             {"role": "system", "content": system_message},
@@ -51,7 +55,14 @@ def download_readme(username, repo):
         return "unavailable"
     except Exception as e:
         return f"An error occurred: {str(e)}"
-    
+def write_to_file(content, base_filename='readme_profile'):
+    timestamp = datetime.now().strftime('%Y%m%d%H%M%S')  # current date and time as a string
+    filename = f"{base_filename}_{timestamp}.md"
+    try:
+        with open(filename, 'w') as f:
+            f.write(content)
+    except Exception as e:
+        print(f"An error occurred while writing to the file: {str(e)}")
 def download_text_from_url(url = ""):
     if url == "":
         return ""
@@ -433,9 +444,10 @@ for repo in repos:
     
     if summarized_txt:
         print(summarized_txt)
-        markdown_readme_profile += f"## repo:{repo}\n\n{summarized_txt}\n\n"
+        markdown_readme_profile += f"## [repo:{repo}](https://github.com/{username}/{repo})\n\n{summarized_txt}\n\n"
 print("======================")
 print(markdown_readme_profile)
+write_to_file(markdown_readme_profile)
 print("======================")
 print("END")
 
